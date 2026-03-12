@@ -1,7 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "timxlu-plugins",
-  "version": "1.0.0",
   "description": "Tim's plugins for Claude Code.",
   "owner": {
     "name": "Tim Lu",
@@ -11,7 +10,7 @@
     {
       "name": "creator-content-management",
       "description": "Personal content management — create platform-optimized posts, podcasts and video, manage content workflows.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": {
         "name": "Tim Lu",
         "email": "admin@timothylu.xyz"
