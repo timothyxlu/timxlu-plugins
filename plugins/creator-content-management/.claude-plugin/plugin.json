@@ -1,0 +1,9 @@
+{
+  "name": "creator-content-management",
+  "version": "0.1.0",
+  "description": "Personal content management — create platform-optimized posts, podcasts and video, manage content workflows.",
+  "author": {
+    "name": "Tim Lu"
+  },
+  "keywords": ["social-media", "content-creation", "podcast", "rednote", "xiaohongshu", "小红书"]
+}

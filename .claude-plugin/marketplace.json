@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "tim-plugin-marketplace",
+  "version": "1.0.0",
+  "description": "Tim's plugin marketplace for Claude Code.",
+  "owner": {
+    "name": "Tim Lu"
+  },
+  "plugins": [
+    {
+      "name": "creator-content-management",
+      "description": "Personal content management — create platform-optimized posts, podcasts and video, manage content workflows.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Tim Lu"
+      },
+      "source": "./plugins/creator-content-management",
+      "category": "example",
+      "tags": ["example", "starter"]
+    }
+  ]
+}
