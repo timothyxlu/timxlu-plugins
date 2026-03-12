@@ -1,5 +1,6 @@
 {
   "name": "creator-content-management",
+  "version": "0.2.2",
   "description": "Personal content management — create platform-optimized posts, podcasts and video, manage content workflows.",
   "author": {
     "name": "Tim Lu",
