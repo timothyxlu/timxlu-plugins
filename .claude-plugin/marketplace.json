@@ -1,10 +1,11 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "tim-plugin-marketplace",
+  "name": "timxlu-plugins",
   "version": "1.0.0",
-  "description": "Tim's plugin marketplace for Claude Code.",
+  "description": "Tim's plugins for Claude Code.",
   "owner": {
-    "name": "Tim Lu"
+    "name": "Tim Lu",
+    "email": "admin@timothyxlu.xyz"
   },
   "plugins": [
     {
@@ -12,11 +13,11 @@
       "description": "Personal content management — create platform-optimized posts, podcasts and video, manage content workflows.",
       "version": "0.1.0",
       "author": {
-        "name": "Tim Lu"
+        "name": "Tim Lu",
+        "email": "admin@timothylu.xyz"
       },
       "source": "./plugins/creator-content-management",
-      "category": "example",
-      "tags": ["example", "starter"]
+      "category": "productivity"
     }
   ]
 }

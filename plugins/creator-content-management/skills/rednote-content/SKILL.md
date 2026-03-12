@@ -1,13 +1,6 @@
 ---
 name: rednote-content
-description: >
-  This skill provides expertise on creating content for Rednote (小红书).
-  Use when the user asks to "create a Rednote post", "write for 小红书",
-  "make xiaohongshu content", "generate Rednote captions", "write Chinese
-  social media posts", or needs guidance on Rednote formatting, hashtags,
-  titles, or content strategy. Also use when translating content into
-  Rednote-optimized Chinese.
-version: 0.1.0
+description: Create and optimize Rednote (小红书/xiaohongshu) posts — content, titles, hashtags, and image cards.
 ---
 
 # Rednote (小红书) Content Creation

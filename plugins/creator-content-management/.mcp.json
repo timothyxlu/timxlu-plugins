@@ -1,8 +1,12 @@
 {
   "mcpServers": {
-    "Notion": {
+    "notion": {
       "type": "http",
       "url": "https://mcp.notion.com/mcp"
+    },
+    "gmail": {
+      "type": "http",
+      "url": "https://gmail.mcp.claude.com/mcp"
     }
   }
 }

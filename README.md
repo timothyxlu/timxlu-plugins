@@ -1,4 +1,4 @@
-# tim-plugin-marketplace
+# timxlu-plugins
 
 A Claude Code plugin marketplace.
 
@@ -12,8 +12,8 @@ A Claude Code plugin marketplace.
 
 ```bash
 # Add the marketplace
-claude plugin marketplace add timothyxlu/tim-plugin-marketplace
+claude plugin marketplace add timothyxlu/timxlu-plugins
 
 # Install a plugin
-claude plugin install hello-world@tim-plugin-marketplace
+claude plugin install creator-content-management@timxlu-plugins
 ```
