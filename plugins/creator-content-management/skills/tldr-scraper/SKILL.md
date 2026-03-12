@@ -86,7 +86,7 @@ The email body is plain text with a well-defined structure. Key parsing rules:
  
 #### Email Body Structure
  
-The TLDR newsletter email body follows this general pattern:
+The TLDR newsletter email body follows this general pattern. The exact section headers and number of articles may vary, but the overall format is consistent:
  
 ```
 TLDR AI 2026-03-10            ← Newsletter name and date
@@ -127,40 +127,24 @@ MISCELLANEOUS
  
 ⚡
 QUICK LINKS                   ← STOP extraction here
- 
- ...                          ← Do NOT process Quick Links
- 
-Links:
-------
-[1] https://...
-[2] https://...
-...
+
 ```
  
 #### Parsing Rules
  
 1. **Start extraction** at the first section header after the sponsor block. Section headers are marked by emoji icons followed by section names: `🚀 HEADLINES & LAUNCHES`, `🧠 DEEP DIVES & ANALYSIS`, `🧑‍💻 ENGINEERING & RESEARCH`, `🎁 MISCELLANEOUS`, etc.
  
-2. **Stop extraction** at `⚡ QUICK LINKS`. Do NOT process Quick Links — they are short one-liners without enough substance for summaries.
+2. **Stop extraction** at `⚡ QUICK LINKS`. Do NOT process Quick Links and content below it.
  
 3. **Skip SPONSOR entries**: Any article title containing `(SPONSOR)` must be skipped entirely (both title and blurb).
  
 4. **Extract for each article:**
    - **Title**: ALL CAPS text followed by `(X MINUTE READ)` — convert to Title Case in output
    - **Read time**: The `(X MINUTE READ)` part
-   - **URL**: Found in the `Links:` section at the bottom of the email, referenced by `[N]` numbers. Match the `[N]` after each title to the corresponding URL.
+   - **URL**: Found in the title line as a hyperlink (if available in the email body; if not, you may need to fetch the email's HTML content to extract links)
    - **TLDR blurb**: The paragraph(s) following the title, before the next title
    - **Category/section**: Determined by which section header the article falls under
- 
-5. **URL resolution**: The email body uses `[N]` reference-style links. The actual URLs are listed at the bottom under `Links:` like:
-   ```
-   Links:
-   ------
-   [5] https://www.promptfoo.dev/blog/promptfoo-joining-openai/?utm_source=tldrai
-   [6] https://techcrunch.com/2026/03/09/...
-   ```
-   Map each article's `[N]` to the corresponding URL.
- 
+
 ### Step 3: Fetch Each Article's Original Content
  
 ⚠️ **MANDATORY — NO EXCEPTIONS: You MUST call `web_fetch` on EVERY article URL.**
@@ -174,7 +158,7 @@ This is the most important step. **Do NOT skip any article.** Do NOT use TLDR's 
 4. Never batch-skip articles to "save tool calls" — thoroughness is more important than speed
  
 ```
-web_fetch url="<article_url>" html_extraction_method="markdown" text_content_token_limit=4000
+web_fetch url="<article_url>" html_extraction_method="markdown" text_content_token_limit=8000
 ```
  
 **Fetch rules:**
@@ -209,9 +193,9 @@ For each article, generate **two summaries** from the fetched content:
 Use the section headers from the email as category groupings:
  
 ```markdown
-# TLDR AI News - 2026-03-10
+# TLDR AI News - 2026-03-10 (link using the "View Online" URL from the email)
  
-> 自动从 TLDR AI Newsletter (via Gmail) 提取的科技新闻摘要（含 AI 生成的短摘要与详细摘要）
+> 自动从 TLDR AI Newsletter 提取的科技新闻摘要（含 AI 生成的短摘要与详细摘要）
  
 ---
  

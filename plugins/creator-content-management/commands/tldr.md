@@ -36,12 +36,12 @@ Save the assembled Markdown file to the user's workspace:
 
 ## Step 5: Save to Notion
 
-Automatically save the digest to the notion “原始资料”data source, category field is “业界新闻”
+Automatically save the digest as a single page to the notion “原始资源”data source.
 
 **Properties:**
-- **标题**: Newsletter name and date (e.g., "TLDR AI - 2026-03-10")
-- **类别**: Newsletter category (e.g., "AI", "Tech")
-- **日期**: Newsletter date (YYYY-MM-DD)
+- **名称**: Newsletter name and date (e.g., "TLDR AI - 2026-03-10")
+- **来源**: URL from title in the markdown
+- **类别**: “业界新闻”
 
 **Notion formatting rules:**
 
