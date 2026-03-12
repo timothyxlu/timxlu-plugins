@@ -36,11 +36,32 @@ Save the assembled Markdown file to the user's workspace:
 
 ## Step 5: Save to Notion
 
-Automatically save the digest as a single page to the notion “原始资源”data source.
+Use `notion-create-pages` to save the digest. First use `notion-search` to find the “原始资源” data source and get its `data_source_id`.
+
+**Important**: `parent` is a separate top-level field, not inside each page. `pages` is a required array. Example:
+
+```json
+{
+  “parent”: {
+    “type”: “data_source_id”,
+    “data_source_id”: “<data_source_id from notion-search>”
+  },
+  “pages”: [
+    {
+      “properties”: {
+        “名称”: “TLDR AI - 2026-03-10”,
+        “来源”: “<View Online URL from the email>”,
+        “类别”: “业界新闻”
+      },
+      “content”: “<full markdown content>”
+    }
+  ]
+}
+```
 
 **Properties:**
-- **名称**: Newsletter name and date (e.g., "TLDR AI - 2026-03-10")
-- **来源**: URL from title in the markdown
+- **名称**: Newsletter name and date (e.g., “TLDR AI - 2026-03-10”)
+- **来源**: “View Online” URL from the email
 - **类别**: “业界新闻”
 
 **Notion formatting rules:**
