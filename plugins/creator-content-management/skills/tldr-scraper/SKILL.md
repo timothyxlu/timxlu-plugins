@@ -13,7 +13,7 @@ This skill enables Claude to:
 1. **Search Gmail** for the latest TLDR newsletter email (from `dan@tldrnewsletter.com`)
 2. **Read the full email body** and parse all article sections
 3. Extract article titles, URLs, categories, read times, and TLDR's own blurbs
-4. **Fetch each article's original content** via `web_fetch`
+4. **Fetch each article's original content** via `stealth-browser-mcp`
 5. **Generate a short summary (<100 words) and a detailed summary (<1000 words, scaled to content length)** for each article
 6. Output summaries in **foldable `<details>` blocks** in Markdown
  
@@ -147,23 +147,18 @@ QUICK LINKS                   ← STOP extraction here
 
 ### Step 3: Fetch Each Article's Original Content
  
-⚠️ **MANDATORY — NO EXCEPTIONS: You MUST call `web_fetch` on EVERY article URL.**
+⚠️ **MANDATORY — NO EXCEPTIONS: You MUST call `stealth-browser-mcp` on EVERY article URL.**
  
 This is the most important step. **Do NOT skip any article.** Do NOT use TLDR's email blurb as a substitute for fetching the original. Do NOT cite "原文无法访问" unless you have actually attempted the fetch and it genuinely failed.
  
 **Compliance checklist (enforce strictly):**
-1. For EVERY article extracted in Step 2, call `web_fetch` with the article's URL
-2. Only after a `web_fetch` call returns an actual error (403, 404, timeout, empty body) may you fall back to TLDR's blurb
-3. If you find yourself writing "原文无法访问" for more than 3 articles in a single run, stop and re-examine — you are likely skipping fetches
-4. Never batch-skip articles to "save tool calls" — thoroughness is more important than speed
+1. For EVERY article extracted in Step 2, call `stealth-browser-mcp` with the article's URL
+2. If you find yourself writing "原文无法访问" for more than 3 articles in a single run, stop and re-examine — you are likely skipping fetches
+3. Never batch-skip articles to "save tool calls" — thoroughness is more important than speed
  
-```
-web_fetch url="<article_url>" html_extraction_method="markdown" text_content_token_limit=8000
-```
  
 **Fetch rules:**
-- If browser tool is available, use it as the first choice for better handling of dynamic content and paywalls, open pages **one at a time** to avoid overwhelming the system.
-- If no browser tool, fetch articles **in parallel** — launch multiple `web_fetch` calls concurrently since they are independent. Do not skip any.
+- Use `stealth-browser-mcp` for better handling of dynamic content and paywalls, open pages **one at a time** to avoid overwhelming the system.
 - If a fetch genuinely fails (timeout, 403, paywall), try `web_search` with the article title to find alternative coverage or cached content. If web search also fails, fall back to TLDR's own blurb for the short summary and note the failure in the detailed summary. Use the output language from Step 0 — e.g., Chinese: "⚠️ 原文无法访问（已尝试抓取及搜索，返回错误：[具体错误]）", English: "⚠️ Original article unavailable (fetch and search attempted, error: [specific error])"
 - If all above methods fail, ask the user to provide the article content directly (e.g., "I wasn't able to access the original article for [Article Title][URL]. If you have access, please provide the content or key points you'd like summarized.")
  
@@ -262,12 +257,7 @@ Detailed summary here...
 ## Error Handling
  
 - If Gmail search returns no results, inform the user and suggest checking their subscriptions
-- If `gmail_read_message` returns an empty body, try the next most recent email
-- If an **individual article fetch fails** (and ONLY after actually attempting the fetch):
-  - Try `web_search` with the article title to find alternative coverage
-  - If search finds usable content, summarize from that source and note it
-  - If both fetch and search fail, use TLDR's own blurb as the short summary
-  - In the detailed summary block, note the failure in the output language from Step 0 — e.g., Chinese: "⚠️ 原文无法访问（已尝试抓取及搜索）— 仅使用 TLDR 提供的简介", English: "⚠️ Original article unavailable (fetch and search attempted) — using TLDR blurb only"
-- **NEVER write a fetch-failure notice without having actually called `web_fetch` and `web_search` first**
+- If `gmail_read_message` returns an empty body, tell the user and ask for next steps (e.g., try a different category, or provide the email content directly)
+- **NEVER** write a fetch-failure notice without having actually called `stealth-browser-mcp`
 - If the email body structure doesn't match expected format, fall back to best-effort parsing and note any issues
  
