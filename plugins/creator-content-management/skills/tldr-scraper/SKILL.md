@@ -162,10 +162,10 @@ web_fetch url="<article_url>" html_extraction_method="markdown" text_content_tok
 ```
  
 **Fetch rules:**
-- Fetch articles **in parallel** — launch multiple `web_fetch` calls concurrently since they are independent. Do not skip any.
+- If browser tool is available, use it as the first choice for better handling of dynamic content and paywalls, open pages **one at a time** to avoid overwhelming the system.
+- If no browser tool, fetch articles **in parallel** — launch multiple `web_fetch` calls concurrently since they are independent. Do not skip any.
 - If a fetch genuinely fails (timeout, 403, paywall), try `web_search` with the article title to find alternative coverage or cached content. If web search also fails, fall back to TLDR's own blurb for the short summary and note the failure in the detailed summary. Use the output language from Step 0 — e.g., Chinese: "⚠️ 原文无法访问（已尝试抓取及搜索，返回错误：[具体错误]）", English: "⚠️ Original article unavailable (fetch and search attempted, error: [specific error])"
-- For paywalled sites, use whatever preview content is available from `web_fetch`, or search for alternative coverage via `web_search`
-- Set a reasonable token limit: `text_content_token_limit=8000`
+- If all above methods fail, ask the user to provide the article content directly (e.g., "I wasn't able to access the original article for [Article Title][URL]. If you have access, please provide the content or key points you'd like summarized.")
  
 ### Step 4: Generate Summaries
  
