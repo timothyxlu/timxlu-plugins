@@ -16,7 +16,7 @@ This skill enables Claude to:
 4. **Fetch each article's original content** via `stealth-browser-mcp`
 5. **Generate a short summary (<100 words) and a detailed summary (<1000 words, scaled to content length)** for each article
 6. Output summaries in **foldable `<details>` blocks** in Markdown
- 
+
 ## Step 0: Determine Output Language (MUST DO FIRST)
  
 Before fetching any content, determine whether the output Markdown file should be in **English** or **Chinese (中文)**. This affects all summaries, section headers, and UI text in the final file.
