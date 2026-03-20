@@ -7,12 +7,7 @@ Extract and summarize a TLDR newsletter. Follow these steps precisely:
 
 ## Step 1: Load TLDR Skill & Environment
 
-1. Read the TLDR skill at `${CLAUDE_PLUGIN_ROOT}/skills/tldr-scraper/SKILL.md`.
-2. Load environment variables from `${CLAUDE_PLUGIN_ROOT}/.env`:
-   ```python
-   from dotenv import load_dotenv
-   load_dotenv(os.path.join(os.environ.get("CLAUDE_PLUGIN_ROOT", "."), ".env"))
-   ```
+- Read the TLDR skill at `${CLAUDE_PLUGIN_ROOT}/skills/tldr-scraper/SKILL.md`.
 
 ## Step 2: Determine Category & Language
 
@@ -80,7 +75,7 @@ Generate a podcast from the TLDR newsletter summary.
 
 Present a summary of all outputs:
 - Local Markdown file path
-- Notion 原始资源 page URL (from notion-uploader)
+- Notion "AI资讯速递" page URL (from notion-uploader)
 - Podcast script path and character count (from podcast-producer)
 - Notion Podcasts page URL (from podcast-producer)
 - Audio file path and size (from podcast-producer)

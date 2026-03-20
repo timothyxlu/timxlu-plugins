@@ -1,6 +1,6 @@
 ---
 name: notion-uploader
-description: Use this agent to upload a TLDR newsletter Markdown summary to Notion's 原始资源 database. Invoke after the local Markdown file has been saved.
+description: Use this agent to upload a TLDR newsletter Markdown summary to Notion's AI资讯速递 database. Invoke after the local Markdown file has been saved.
 model: sonnet
 ---
 
@@ -21,7 +21,7 @@ Read the entire Markdown file. This is your source of truth.
 
 ### 2. Find the Notion database
 
-Search Notion for the "原始资源" data source. Fetch the database to get its schema and `data_source_id`.
+Search Notion for the "AI资讯速递" data source. Fetch the database to get its schema and `data_source_id`.
 
 ### 3. Create the page
 

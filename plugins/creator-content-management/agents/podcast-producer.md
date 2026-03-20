@@ -82,9 +82,32 @@ python {tts_script_path} \
 
 The script will submit the task, poll for completion, and download the MP3 automatically.
 
-### Step 5: Report
+### Step 5: Upload audio to R2
+
+Upload the generated MP3 to the Cloudflare R2 bucket `tldr-podcast` using wrangler:
+
+```bash
+wrangler r2 object put tldr-podcast/tldr-ai-podcast-YYYY-MM-DD.mp3 \
+  --file={audio_output_path} \
+  --content-type=audio/mpeg \
+  --remote
+```
+
+The public URL will be: `https://tldr-podcast.timothyxlu.xyz/tldr-ai-podcast-YYYY-MM-DD.mp3`
+
+### Step 6: Add audio block to Notion page
+
+Use the Notion update-page tool to insert an audio block at the very beginning of the page content:
+
+```
+<audio src="https://tldr-podcast.timothyxlu.xyz/tldr-ai-podcast-YYYY-MM-DD.mp3">今日AI: YYYY-MM-DD</audio>
+```
+
+Use the `update_content` command with `old_str` matching the first line of the script text, and `new_str` prepending the audio block followed by the original first line.
+
+### Step 7: Report
 
 Return:
 - The podcast script file path and character count
 - The Notion Podcasts page URL
-- The audio file path and file size
+- The R2 audio URL
