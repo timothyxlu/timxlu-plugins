@@ -13,12 +13,35 @@ Environment:
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import os
 import sys
 import time
 
 import requests
+
+
+class TeeLogger:
+    """Write to both stdout/stderr and a log file."""
+
+    def __init__(self, log_path: str):
+        self.log_file = open(log_path, "a", encoding="utf-8")
+        self.log_file.write(f"\n{'='*60}\n")
+        self.log_file.write(f"Run started: {datetime.datetime.now().isoformat()}\n")
+        self.log_file.write(f"{'='*60}\n")
+
+    def log(self, msg: str, *, error: bool = False):
+        stream = sys.stderr if error else sys.stdout
+        print(msg, file=stream)
+        self.log_file.write(msg + "\n")
+        self.log_file.flush()
+
+    def close(self):
+        self.log_file.close()
+
+
+logger: TeeLogger | None = None
 
 API_BASE = "https://api.minimaxi.com/v1"
 MODEL = "speech-2.8-turbo"
@@ -71,12 +94,12 @@ def create_task(
     status_code = data.get("base_resp", {}).get("status_code", -1)
     if status_code != 0:
         msg = data.get("base_resp", {}).get("status_msg", "unknown error")
-        print(f"ERROR: Task creation failed [{status_code}]: {msg}", file=sys.stderr)
+        logger.log(f"ERROR: Task creation failed [{status_code}]: {msg}", error=True)
         sys.exit(1)
 
     task_id = data["task_id"]
     chars = data.get("usage_characters", 0)
-    print(f"Task created: {task_id} ({chars} billable characters)")
+    logger.log(f"Task created: {task_id} ({chars} billable characters)")
     return task_id
 
 
@@ -94,19 +117,19 @@ def poll_task(api_key: str, task_id: str) -> int:
         status = data.get("status", "").lower()
         if status == "success":
             file_id = data["file_id"]
-            print(f"Task completed. file_id: {file_id}")
+            logger.log(f"Task completed. file_id: {file_id}")
             return file_id
         elif status in ("failed", "expired"):
             msg = data.get("base_resp", {}).get("status_msg", "")
-            print(f"ERROR: Task {status}: {msg}", file=sys.stderr)
+            logger.log(f"ERROR: Task {status}: {msg}", error=True)
             sys.exit(1)
 
         # Still processing
         if i % 6 == 0:
-            print(f"  Processing... ({i * POLL_INTERVAL}s elapsed)")
+            logger.log(f"  Processing... ({i * POLL_INTERVAL}s elapsed)")
         time.sleep(POLL_INTERVAL)
 
-    print("ERROR: Polling timed out.", file=sys.stderr)
+    logger.log("ERROR: Polling timed out.", error=True)
     sys.exit(1)
 
 
@@ -123,7 +146,7 @@ def download_audio(api_key: str, file_id: int, output_path: str):
         f.write(resp.content)
 
     size_mb = len(resp.content) / (1024 * 1024)
-    print(f"Audio saved: {output_path} ({size_mb:.1f} MB)")
+    logger.log(f"Audio saved: {output_path} ({size_mb:.1f} MB)")
 
 
 def main():
@@ -148,13 +171,6 @@ def main():
         print("ERROR: Input file is empty.", file=sys.stderr)
         sys.exit(1)
 
-    if len(text) > MAX_TEXT_LENGTH:
-        print(f"WARNING: Text is {len(text)} chars (max {MAX_TEXT_LENGTH}). It will be truncated.", file=sys.stderr)
-        text = text[:MAX_TEXT_LENGTH]
-
-    print(f"Input: {args.input} ({len(text)} chars)")
-    print(f"Voice: {args.voice_id}, Speed: {args.speed}, Format: {args.format}")
-
     # Default output path
     output_path = args.output
     if not output_path:
@@ -163,12 +179,27 @@ def main():
 
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
+    # Initialize logger — writes to .log file next to the output audio
+    global logger
+    log_path = os.path.splitext(output_path)[0] + ".log"
+    logger = TeeLogger(log_path)
+
+    if len(text) > MAX_TEXT_LENGTH:
+        logger.log(f"WARNING: Text is {len(text)} chars (max {MAX_TEXT_LENGTH}). It will be truncated.")
+        text = text[:MAX_TEXT_LENGTH]
+
+    logger.log(f"Input: {args.input} ({len(text)} chars)")
+    logger.log(f"Voice: {args.voice_id}, Speed: {args.speed}, Format: {args.format}")
+    logger.log(f"Model: {MODEL}")
+    logger.log(f"Output: {output_path}")
+
     # Run async TTS pipeline
     task_id = create_task(api_key, text, args.voice_id, args.format, args.speed)
     file_id = poll_task(api_key, task_id)
     download_audio(api_key, file_id, output_path)
 
-    print("Done.")
+    logger.log("Done.")
+    logger.close()
 
 
 if __name__ == "__main__":

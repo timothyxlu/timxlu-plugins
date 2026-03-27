@@ -71,8 +71,7 @@ Search Notion for the "Podcasts" database. Fetch it to get the schema and `data_
 Then update the page content with the full TTS script text, preserving plain text formatting with paragraph breaks.
 
 ### Step 4: Generate audio
-
-Run the TTS script:
+**CRITICAL: Run this command in the FOREGROUND (do NOT use `run_in_background`).** Steps 5 and 6 depend on the audio file existing. If you run TTS in the background, you will return before it completes and steps 5-6 will never execute. Set a timeout of 10min to allow enough time for the API to process. 
 ```bash
 python {tts_script_path} \
   --input {script_output_path} \
