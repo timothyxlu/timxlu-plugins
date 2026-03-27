@@ -19,7 +19,7 @@ The user's argument is: $ARGUMENTS
 
 ## Step 3: Extract & Summarize
 
-Follow the skill's extraction workflow (Steps 1-4): search Gmail → parse email → fetch all articles in parallel → generate summaries.
+Follow the skill's extraction workflow (Steps 1-4): search Gmail → parse email → fetch articles sequentially → generate summaries.
 
 ## Step 4: Save Locally
 

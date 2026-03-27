@@ -158,7 +158,8 @@ This is the most important step. **Do NOT skip any article.** Do NOT use TLDR's 
  
  
 **Fetch rules:**
-- Use `stealth-browser-mcp` for better handling of dynamic content and paywalls, open pages **one at a time** to avoid overwhelming the system.
+- Use `stealth-browser-mcp` for better handling of dynamic content and paywalls.
+- **CRITICAL: Call browser tools SEQUENTIALLY (one at a time).** Do NOT make parallel browser MCP calls — the browser instance is shared and concurrent calls will cause race conditions, navigation conflicts, and data corruption. Process each article URL serially before moving to the next.
 - If a fetch genuinely fails (timeout, 403, paywall), try `web_search` with the article title to find alternative coverage or cached content. If web search also fails, fall back to TLDR's own blurb for the short summary and note the failure in the detailed summary. Use the output language from Step 0 — e.g., Chinese: "⚠️ 原文无法访问（已尝试抓取及搜索，返回错误：[具体错误]）", English: "⚠️ Original article unavailable (fetch and search attempted, error: [specific error])"
 - If all above methods fail, ask the user to provide the article content directly (e.g., "I wasn't able to access the original article for [Article Title][URL]. If you have access, please provide the content or key points you'd like summarized.")
  
