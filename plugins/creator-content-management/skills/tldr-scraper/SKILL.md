@@ -45,7 +45,7 @@ Before fetching any content, determine whether the output Markdown file should b
  
 ### Step 1: Search Gmail for the Latest TLDR Newsletter
  
-Use the Gmail MCP tool to find the most recent TLDR newsletter email.
+Use the `gws-gmail` skill to find the most recent TLDR newsletter email.
  
 ⚠️ **IMPORTANT: Match BOTH sender name AND email address.** All TLDR newsletters share the same email address `dan@tldrnewsletter.com`, but each category has a distinct sender display name (e.g., `TLDR AI`, `TLDR Dev`, `TLDR Fintech`). You MUST use `from:"<Sender Name>"` combined with `from:dan@tldrnewsletter.com` to correctly filter by category.
  
