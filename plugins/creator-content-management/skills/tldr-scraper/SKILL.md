@@ -17,24 +17,20 @@ This skill enables Claude to:
 5. **Generate a short summary (<100 words) and a detailed summary (<1000 words, scaled to content length)** for each article
 6. Output summaries in **foldable `<details>` blocks** in Markdown
 
-## Step 0: Determine Output Language (MUST DO FIRST)
- 
-Before fetching any content, determine whether the output Markdown file should be in **English** or **Chinese (中文)**. This affects all summaries, section headers, and UI text in the final file.
- 
-**Detection rules (in order of priority):**
-1. **Explicit request** — If the user specifies a language (e.g., "用中文", "in English", "中文摘要"), use that.
-2. **Conversation language** — If the user's message is written in Chinese, default to Chinese output. If in English, default to English.
-3. **Memory/context** — Check if user preferences (e.g., from memory or past conversations) indicate a preferred language.
-4. **When in doubt — ASK.**
- 
+## Step 0: Output Language — Always Bilingual
+
+This skill **always produces both Chinese and English outputs**. You will generate two separate Markdown files — one in Chinese, one in English. This means:
+- Generate summaries in **both languages** for every article (Step 4)
+- Assemble **two Markdown files** using the language-specific templates (Step 5)
+
 **What changes by language:**
- 
-| Element | English | Chinese |
+
+| Element | English file | Chinese file |
 |---------|---------|---------|
 | File header / intro | English | 中文 |
 | Section headers (🚀 Headlines, etc.) | English labels | 中文标签 (e.g., 🚀 头条新闻) |
-| 短摘要 / Short summary | English | 中文 |
-| 详细摘要 / Detailed summary | English | 中文 |
+| Short summary | English | 中文 |
+| Detailed summary | English | 中文 |
 | Article titles & links | Original (unchanged) | Original (unchanged) |
 | Category & read time labels | English | English (keep original) |
 | Footer / generation note | English | 中文 |
@@ -160,21 +156,20 @@ This is the most important step. **Do NOT skip any article.** Do NOT use TLDR's 
 **Fetch rules:**
 - Use `stealth-browser-mcp` for better handling of dynamic content and paywalls.
 - **CRITICAL: Call browser tools SEQUENTIALLY (one at a time).** Do NOT make parallel browser MCP calls — the browser instance is shared and concurrent calls will cause race conditions, navigation conflicts, and data corruption. Process each article URL serially before moving to the next.
-- If a fetch genuinely fails (timeout, 403, paywall), try `web_search` with the article title to find alternative coverage or cached content. If web search also fails, fall back to TLDR's own blurb for the short summary and note the failure in the detailed summary. Use the output language from Step 0 — e.g., Chinese: "⚠️ 原文无法访问（已尝试抓取及搜索，返回错误：[具体错误]）", English: "⚠️ Original article unavailable (fetch and search attempted, error: [specific error])"
+- If a fetch genuinely fails (timeout, 403, paywall), try `web_search` with the article title to find alternative coverage or cached content. If web search also fails, fall back to TLDR's own blurb for the short summary and note the failure in the detailed summary. Include the error notice in both language files — Chinese: "⚠️ 原文无法访问（已尝试抓取及搜索，返回错误：[具体错误]）", English: "⚠️ Original article unavailable (fetch and search attempted, error: [specific error])"
 - If all above methods fail, ask the user to provide the article content directly (e.g., "I wasn't able to access the original article for [Article Title][URL]. If you have access, please provide the content or key points you'd like summarized.")
  
-### Step 4: Generate Summaries
+### Step 4: Generate Summaries (Bilingual)
  
-For each article, generate **two summaries** from the fetched content:
- 
-#### Short Summary (短摘要)
-- **Max 100 words**
+For each article, generate summaries in **both Chinese and English** from the fetched content. Each article gets four summaries total:
+
+#### Short Summary (短摘要) — one Chinese, one English
+- **Max 100 words** (per language)
 - One paragraph, no bullet points
 - Capture the single most important takeaway
-- Language determined by Step 0
  
-#### Detailed Summary (详细摘要)
-- **Scaled to original content length, max 1000 words**
+#### Detailed Summary (详细摘要) — one Chinese, one English
+- **Scaled to original content length, max 1000 words** (per language)
 - Scaling guide:
   - 1-2 min read (~500 words original) → ~150-200 word summary
   - 3-5 min read (~1000-1500 words original) → ~300-500 word summary
@@ -184,72 +179,68 @@ For each article, generate **two summaries** from the fetched content:
 - May include brief bullet points for listing multiple findings or features
 - Maintain factual accuracy — do not hallucinate details not in the source
  
-### Step 5: Assemble Markdown with Foldable Blocks
- 
-Use the section headers from the email as category groupings:
- 
-```markdown
-# TLDR AI News - 2026-03-10 (link using the "View Online" URL from the email)
- 
-> 自动从 TLDR AI Newsletter 提取的科技新闻摘要（含 AI 生成的短摘要与详细摘要）
- 
----
- 
-## 🚀 头条新闻 / Headlines & Launches
- 
-### [Article Title](https://link-to-article)
-**X minute read**
- 
-📋 Short summary here (plain text, no block)...
- 
-<details>
-<summary>📖 详细摘要</summary>
- 
-Detailed summary here...
- 
-</details>
- 
----
- 
-## 🧠 深度分析 / Deep Dives & Analysis
- 
-### [Article Title](https://link)
-**X minute read**
- 
-📋 Short summary here...
- 
-<details>
-<summary>📖 详细摘要</summary>
- 
-...
- 
-</details>
- 
----
- 
-## 🧑‍💻 工程与研究 / Engineering & Research
- 
-...
- 
----
- 
-## 🎁 杂项 / Miscellaneous
- 
-...
- 
----
- 
-*生成于 [DATE] · 数据来源: TLDR AI Newsletter*
-```
- 
+### Step 5: Assemble Two Markdown Files with Foldable Blocks
+
+Produce **two files** — one Chinese, one English — using the same structure but different language content.
+
 #### Section Header Mapping
 
-| Email Section | Output Header (Chinese) | Output Header (English) |
+| Email Section | Chinese file header | English file header |
 |---------------|------------------------|------------------------|
 | HEADLINES & LAUNCHES | 🚀 头条新闻 | 🚀 Headlines & Launches |
 | DEEP DIVES & ANALYSIS | 🧠 深度分析 | 🧠 Deep Dives & Analysis |
 | ENGINEERING & RESEARCH | 🧑‍💻 工程与研究 | 🧑‍💻 Engineering & Research |
 | MISCELLANEOUS | 🎁 杂项 | 🎁 Miscellaneous |
+
+#### Chinese file template
+
+```markdown
+# TLDR AI News - 2026-03-10 (link using the "View Online" URL from the email)
+
+> 自动从 TLDR AI Newsletter 提取的科技新闻摘要（含 AI 生成的短摘要与详细摘要）
+
+---
+
+## 🚀 头条新闻
+
+### [Article Title](https://link-to-article)
+**X minute read**
+
+📋 Chinese short summary here...
+
+<details>
+<summary>📖 详细摘要</summary>
+
+Chinese detailed summary here...
+
+</details>
+
+```
+
+#### English file template
+
+```markdown
+# TLDR AI News - 2026-03-10 (link using the "View Online" URL from the email)
+
+> Auto-extracted tech news summaries from TLDR AI Newsletter (with AI-generated short & detailed summaries)
+
+---
+
+## 🚀 Headlines & Launches
+
+### [Article Title](https://link-to-article)
+**X minute read**
+
+📋 English short summary here...
+
+<details>
+<summary>📖 Detailed Summary</summary>
+
+English detailed summary here...
+
+</details>
+
+```
 
 **Formatting notes:**
 - Always include a blank line after `<summary>` closing tag and before content

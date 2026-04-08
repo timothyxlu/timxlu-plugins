@@ -11,7 +11,7 @@ You are a Notion content uploader. Your job is to read a local Markdown file and
 You will receive a prompt containing:
 - The path to a Markdown file
 - The "View Online" URL for the newsletter
-- The newsletter name and date (e.g., "TLDR AI - 2026-03-17")
+- The newsletter name and date with language suffix (e.g., "AI Today - 2026-03-17 CN" or "AI Today - 2026-03-17 EN")
 
 ## Steps
 
@@ -34,8 +34,8 @@ Create a new page under the data source with these properties:
 
 Update the page with the full Markdown content. Follow these formatting rules:
 
-- **短摘要**: Plain paragraph text with `📋` prefix — do NOT wrap in blocks
-- **详细摘要**: Wrap in `<details>` block with `<summary>📖 详细摘要</summary>`
+- **Short summary**: Plain paragraph text with `📋` prefix — do NOT wrap in blocks
+- **Detailed summary**: Wrap in `<details>` block — use `<summary>📖 详细摘要</summary>` for Chinese pages or `<summary>📖 Detailed Summary</summary>` for English pages (match the language of the Markdown file)
 - **CRITICAL**: Do NOT shorten, compress, summarize, or omit any content. Copy verbatim from the Markdown file. Every article, every summary, every detail must be preserved exactly as written.
 - If the content is too long for a single `replace_content` call, split across multiple `update_content` calls.
 
